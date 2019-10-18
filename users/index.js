@@ -13,6 +13,7 @@ module.exports = {
       path: '/users',
       // options: { auth: false },
       handler: (request, h) => {
+        console.log({ server })
         return 'Hello World!'
       }
     })

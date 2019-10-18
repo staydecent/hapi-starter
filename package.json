@@ -13,6 +13,7 @@
     "@hapi/hapi": "18.4.0",
     "better-sqlite3": "5.4.3",
     "hapi-auth-bearer-token": "6.2.1",
-    "knex": "0.19.5"
+    "knex": "0.19.5",
+    "sqlite3": "4.1.0"
   }
 }

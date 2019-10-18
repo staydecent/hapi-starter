@@ -1,6 +1,8 @@
 const Hapi = require('@hapi/hapi')
 const AuthBearer = require('hapi-auth-bearer-token')
 
+const KnexPlugin = require('./knex')
+
 const apps = [
   require('./users')
 ]
@@ -21,14 +23,17 @@ const start = async () => {
   // Setup DB
   // ---
 
-  // @TODO: Write plugin to expose knex DB instance on hapi toolkit
-  const knex = require('knex')({
-    client: 'sqlite3',
-    connection: {
-      filename: './mydb.sqlite'
-    },
-    migrations: {
-      tableName: 'migrations'
+  await server.register({
+    plugin: KnexPlugin,
+    options: {
+      client: 'sqlite3',
+      useNullAsDefault: true,
+      connection: {
+        filename: ':memory:'
+      },
+      migrations: {
+        tableName: 'migrations'
+      }
     }
   })
 
