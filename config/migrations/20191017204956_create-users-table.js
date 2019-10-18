@@ -1,13 +1,11 @@
 
-exports.up = function (knex) {
-  return knex.schema.createTable('users', function (table) {
-    table.increments('id').primary()
-    table.string('email')
-    table.string('password')
-    table.timestamps()
-  }) 
-}
+exports.up = knex =>
+  knex.schema.createTable('users', t => {
+    t.increments('id').primary()
+    t.string('email')
+    t.string('password')
+    t.timestamps(false, true) // [useTimestamps], [defaultToNow]
+  })
 
-exports.down = function (knex) {
-  return knex.schema.dropTable('users')
-}
+exports.down = knex =>
+  knex.schema.dropTable('users')

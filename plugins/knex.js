@@ -15,12 +15,11 @@ module.exports = {
   register: async function (server, options) {
     let knex
 
-    console.log('KnexPlugin', { options })
-
     server.decorate('server', 'knex', knex)
 
     server.ext('onPreStart', () => {
-      knex = require('knex')(Object.assign(defaultOptions, options))
+      const opts = Object.assign(defaultOptions, options)
+      knex = require('knex')(opts)
       server.decorate('server', 'knex', knex)
     })
 

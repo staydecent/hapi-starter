@@ -7,6 +7,7 @@ const Hapi = require('@hapi/hapi')
 const AuthBearer = require('hapi-auth-bearer-token')
 
 const KnexPlugin = require('./plugins/knex')
+const RestfulPlugin = require('./plugins/restful')
 
 const db = require('./config/db')[environment]
 
@@ -15,20 +16,22 @@ const handleErr = (err) => {
   process.exit(1)
 }
 
-process.on('unhandledRejection', handleErr)
-
 const start = async () => {
   const server = Hapi.server({
     port: 3000,
     host: 'localhost'
   })
 
-  // Setup DB
+  // Setup DB and Restful plugins
   // ---
 
   await server.register({
     plugin: KnexPlugin,
     options: db
+  })
+
+  await server.register({
+    plugin: RestfulPlugin
   })
 
   // Setup Authentication
@@ -54,7 +57,7 @@ const start = async () => {
   // Load all app plugins and start the show!
   // ---
 
-  glob('apps/**/index.js', async (err, files) => {
+  await glob('apps/**/index.js', async (err, files) => {
     err && handleErr(err)
     await server.register(files.map(f => require(path.resolve(f))))
   })
@@ -62,5 +65,7 @@ const start = async () => {
   await server.start()
   console.log('Server running on %s', server.info.uri)
 }
+
+process.on('unhandledRejection', handleErr)
 
 start()

@@ -1,14 +1,12 @@
 
-exports.up = function (knex) {
-  return knex.schema.createTable('tokens', function (table) {
-    table.increments('id').primary()
-    table.string('key')
-    table.integer('user').unsigned().notNullable()
-    table.foreign('user').references('id').inTable('users')
-    table.timestamps()
-  }) 
-}
+exports.up = knex =>
+  knex.schema.createTable('tokens', t => {
+    t.increments('id').primary()
+    t.string('key')
+    t.integer('user').unsigned().notNullable()
+    t.foreign('user').references('id').inTable('users')
+    t.timestamps(false, true) // [useTimestamps], [defaultToNow]
+  })
 
-exports.down = function (knex) {
-  return knex.schema.dropTable('tokens')
-}
+exports.down = knex =>
+  knex.schema.dropTable('tokens')
