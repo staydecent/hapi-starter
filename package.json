@@ -4,16 +4,25 @@
   "description": "Boilerplate for starting hapi powered API projects",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "if test -z \"$NODE_ENV\"; then npm run dev; else npm run production; fi",
+    "dev": "sane 'node index.js' --glob='**/*.js'",
+    "production": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "migrate:make": "knex migrate:make --knexfile config/db.js",
+    "migrate": "knex migrate:latest --knexfile config/db.js",
+    "seed:make": "knex seed:make --knexfile config/db.js",
+    "seed": "knex seed:run --knexfile config/db.js"
   },
   "author": "Adrian Unger <npm@staydecent.ca>",
   "license": "MIT",
   "dependencies": {
     "@hapi/hapi": "18.4.0",
-    "better-sqlite3": "5.4.3",
+    "glob": "7.1.4",
     "hapi-auth-bearer-token": "6.2.1",
     "knex": "0.19.5",
     "sqlite3": "4.1.0"
+  },
+  "devDependencies": {
+    "sane": "4.1.0"
   }
 }

@@ -1,11 +1,14 @@
+const environment = process.env.NODE_ENV || 'development'
+
+const path = require('path')
+const glob = require('glob')
+
 const Hapi = require('@hapi/hapi')
 const AuthBearer = require('hapi-auth-bearer-token')
 
-const KnexPlugin = require('./knex')
+const KnexPlugin = require('./plugins/knex')
 
-const apps = [
-  require('./users')
-]
+const db = require('./config/db')[environment]
 
 const handleErr = (err) => {
   console.log(err)
@@ -25,16 +28,7 @@ const start = async () => {
 
   await server.register({
     plugin: KnexPlugin,
-    options: {
-      client: 'sqlite3',
-      useNullAsDefault: true,
-      connection: {
-        filename: ':memory:'
-      },
-      migrations: {
-        tableName: 'migrations'
-      }
-    }
+    options: db
   })
 
   // Setup Authentication
@@ -60,7 +54,11 @@ const start = async () => {
   // Load all app plugins and start the show!
   // ---
 
-  await server.register(apps)
+  glob('apps/**/index.js', async (err, files) => {
+    err && handleErr(err)
+    await server.register(files.map(f => require(path.resolve(f))))
+  })
+
   await server.start()
   console.log('Server running on %s', server.info.uri)
 }
