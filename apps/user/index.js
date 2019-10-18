@@ -1,3 +1,5 @@
+const crypto = require('crypto')
+const bcrypt = require('bcryptjs')
 const Joi = require('@hapi/joi')
 
 const userSchema = Joi.object({
@@ -9,6 +11,17 @@ const userSchema = Joi.object({
 })
 
 const usersSchema = Joi.array().items(userSchema)
+
+const newTokenForUser = async (knex, userId) => {
+  const key = crypto
+    .createHash('sha1')
+    .update(crypto.randomBytes(20) + userId)
+    .digest('hex')
+  await knex
+    .insert({ user: userId, key })
+    .into('tokens')
+  return key
+}
 
 // path('users', api.Users.as_view(), name='users'),
 // path('users/<int:pk>', api.Users.as_view(), name='user'),
@@ -39,6 +52,37 @@ module.exports = {
           queryset: async (request) =>
             await server.knex('users').where({ id: request.params.id }).first('*'),
           schema: userSchema
+        }
+      }
+    })
+
+    server.route({
+      method: 'GET',
+      path: '/users/signup',
+      handler: async (request, h) => {
+        const email = request.payload.email
+        const password = request.payload.password
+
+        // Check existing user with email, otherwise create new user
+        const user = await server.knex('users').where({ email: email }).first('id')
+        if (user) {
+          return h.response({
+            errors: ['An account with that email already exists.']
+          }).code(400)
+        } else {
+          const hashed = await bcrypt.hash(password, 10)
+          const [id] = await knex
+            .returning('id')
+            .insert({ email, password: hashed })
+            .into('users')
+
+          // # Mail.send(settings.MAIL_NEW_ACCOUNT, user, {'email': 'john@example.com'})
+          // Create a login token right away
+          const token = await newTokenForUser(knex, userId)
+          return h.response({
+            userId: id,
+            token: token.key
+          }).code(201)
         }
       }
     })

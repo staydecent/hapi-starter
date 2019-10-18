@@ -19,6 +19,7 @@
   "dependencies": {
     "@hapi/hapi": "18.4.0",
     "@hapi/joi": "16.1.7",
+    "bcryptjs": "2.4.3",
     "glob": "7.1.4",
     "hapi-auth-bearer-token": "6.2.1",
     "knex": "0.19.5",
