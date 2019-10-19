@@ -8,7 +8,7 @@
     "dev": "nodemon index.js",
     "production": "node index.js",
     "pretest": "standard --verbose | snazzy",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "lab -v apps/**/tests.js",
     "migrate:make": "knex migrate:make --knexfile config/db.js",
     "migrate": "knex migrate:latest --knexfile config/db.js",
     "seed:make": "knex seed:make --knexfile config/db.js",
@@ -28,6 +28,8 @@
     "sqlite3": "4.1.0"
   },
   "devDependencies": {
+    "@hapi/code": "7.0.0",
+    "@hapi/lab": "21.0.0",
     "nodemon": "1.19.4",
     "snazzy": "8.0.0",
     "standard": "14.3.1"

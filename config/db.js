@@ -18,9 +18,13 @@ module.exports = {
   test: {
     client: 'sqlite3',
     useNullAsDefault: true,
-    debug: true,
+    debug: false,
+    postProcessResponse,
     connection: {
       filename: ':memory:'
+    },
+    migrations: {
+      tableName: 'migrations'
     }
   },
 

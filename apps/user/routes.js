@@ -1,5 +1,5 @@
 const { userSchema, usersSchema } = require('./schema')
-const { signup } = require('./handlers')
+const { signup, login } = require('./handlers')
 
 module.exports = [
   {
@@ -34,8 +34,17 @@ module.exports = [
     options: {
       description: 'Signup user with email and password'
     },
-    method: 'GET',
+    method: 'POST',
     path: '/users/signup',
     handler: signup
+  },
+
+  {
+    options: {
+      description: 'Login user with provided credentials'
+    },
+    method: 'POST',
+    path: '/users/login',
+    handler: login
   }
 ]

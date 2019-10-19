@@ -42,8 +42,12 @@ module.exports = {
       }
     }
 
+    server.decorate('server', 'migrate', knex.migrate)
+    server.decorate('server', 'seed', knex.seed)
     server.decorate('server', 'registerModel', registerModel)
     server.decorate('server', 'models', () => models)
+    server.decorate('request', 'models', () => models)
+    server.decorate('toolkit', 'models', () => models)
 
     server.ext('onPreStart', () => {
       server.decorate('server', 'knex', knex)
