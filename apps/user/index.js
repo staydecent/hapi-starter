@@ -26,6 +26,10 @@ module.exports = {
     // Override by providing: `options: { auth: false }` on your route.
     server.auth.default('token')
 
+    // Register our models
+    server.registerModel('User', 'users')
+    server.registerModel('Token', 'tokens')
+
     // Load our user routes
     server.route(routes)
   }

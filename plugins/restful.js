@@ -6,7 +6,7 @@ module.exports = {
     server.decorate('handler', 'resourceList', (route, { queryset, schema }) => async (request, h) => {
       const errors = []
       try {
-        const results = await queryset(request)
+        const results = await queryset(request, server.models())
         const { value, error } = schema.validate(results, { presence: 'required' })
         if (error) {
           errors.push(error.details)
@@ -24,7 +24,7 @@ module.exports = {
     server.decorate('handler', 'resourceDetail', (route, { queryset, schema }) => async (request, h) => {
       const errors = []
       try {
-        const result = await queryset(request)
+        const result = await queryset(request, server.models())
         const { value, error } = schema.validate(result, { presence: 'required' })
         if (error) {
           errors.push(error.details)

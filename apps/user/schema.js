@@ -10,7 +10,7 @@ const userSchema = Joi.object({
 
 const usersSchema = Joi.array().items(userSchema)
 
-module.exports= {
+module.exports = {
   userSchema,
   usersSchema
 }

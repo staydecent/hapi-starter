@@ -12,7 +12,7 @@ module.exports = {
       'hapi-auth-bearer-token',
       './plugins/restful',
       {
-        plugin: './plugins/knex',
+        plugin: './plugins/models',
         options: require('./db')[environment]
       },
 
