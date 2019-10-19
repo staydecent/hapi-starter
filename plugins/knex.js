@@ -15,12 +15,12 @@ module.exports = {
   register: async function (server, options) {
     let knex
 
-    server.decorate('server', 'knex', knex)
-
     server.ext('onPreStart', () => {
       const opts = Object.assign(defaultOptions, options)
       knex = require('knex')(opts)
       server.decorate('server', 'knex', knex)
+      server.decorate('request', 'knex', knex)
+      server.decorate('toolkit', 'knex', knex)
     })
 
     server.ext('onPostStop', () => {
