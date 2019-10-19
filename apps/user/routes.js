@@ -4,8 +4,10 @@ const { userSchema, usersSchema } = require('./schema')
 const { newTokenForUser } = require('./libs')
 
 module.exports = [
-  // Users list
   {
+    options: {
+      description: 'List all users'
+    },
     method: 'GET',
     path: '/users',
     handler: {
@@ -16,8 +18,10 @@ module.exports = [
     }
   },
 
-  // User detail
   {
+    options: {
+      description: 'Display user specific info'
+    },
     method: 'GET',
     path: '/users/{id}',
     handler: {
@@ -28,8 +32,10 @@ module.exports = [
     }
   },
 
-  // Signup
   {
+    options: {
+      description: 'Signup user with email and password'
+    },
     method: 'GET',
     path: '/users/signup',
     handler: async (request, h) => {

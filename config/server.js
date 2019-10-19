@@ -8,6 +8,7 @@ module.exports = {
   },
   register: {
     plugins: [
+      'blipp',
       'hapi-auth-bearer-token',
       './plugins/restful',
       {

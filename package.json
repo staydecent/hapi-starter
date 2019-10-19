@@ -21,6 +21,7 @@
     "@hapi/hapi": "18.4.0",
     "@hapi/joi": "16.1.7",
     "bcryptjs": "2.4.3",
+    "blipp": "4.0.1",
     "hapi-auth-bearer-token": "6.2.1",
     "knex": "0.19.5",
     "sqlite3": "4.1.0"
