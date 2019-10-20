@@ -1,7 +1,3 @@
-const check = require('check-arg-types')
-
-const toType = check.prototype.toType
-
 const defaultOptions = {
   client: 'sqlite3',
   useNullAsDefault: true,
@@ -30,13 +26,16 @@ module.exports = {
           },
 
           filter (where, select = '*') {
-            return toType(where) === 'array'
+            return Array.isArray(where)
               ? knex.select(select).where(...where).from(tableName)
               : knex.select(select).where(where).from(tableName)
           },
 
-          get (where, select = '*') {
-            return knex(tableName).where(where).first(select)
+          async get (where, select = '*') {
+            const res = await Array.isArray(where)
+              ? knex.select(select).limit(1).where(...where).from(tableName)
+              : knex.select(select).limit(1).where(where).from(tableName)
+            return Array.isArray(res) ? res[0] : undefined
           }
         }
       }

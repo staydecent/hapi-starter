@@ -2,7 +2,7 @@ const crypto = require('crypto')
 
 // @TODO: Cleanup old tokens if creating a new one
 const newTokenForUser = async (knex, userId) => {
-  const key = crypto
+  const key = await crypto
     .createHash('sha1')
     .update(crypto.randomBytes(20) + userId)
     .digest('hex')

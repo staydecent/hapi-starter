@@ -1,4 +1,10 @@
+const check = require('check-arg-types')
+const toType = check.prototype.toType
+
 function convertToCamel (row) {
+  if (toType(row) !== 'object') {
+    return row
+  }
   const newRow = {}
   for (const key in row) {
     let ret = ''

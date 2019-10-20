@@ -12,22 +12,21 @@ async function signup (request, h) {
   const password = request.payload.password
 
   // Check existing user with email, otherwise create new user
-  const user = await request.knex('users').where({ email: email }).first('id')
+  const user = await h.models().User.objects.get({ email })
   if (user) {
     return h.response({
       errors: ['An account with that email already exists.']
     }).code(400)
   } else {
     const hashed = await bcrypt.hash(password, 10)
-    const [id] = await request.knex
-      .returning('id')
+    const [userId] = await request.knex
       .insert({ email, password: hashed })
       .into('users')
 
     // # Mail.send(settings.MAIL_NEW_ACCOUNT, user, {'email': 'john@example.com'})
     // Create a login token right away
-    const token = await newTokenForUser(request.knex, id)
-    return h.response({ userId: id, token: token.key }).code(201)
+    const token = await newTokenForUser(request.knex, userId)
+    return h.response({ userId, token }).code(201)
   }
 }
 
@@ -40,7 +39,7 @@ async function login (request, h) {
     return http400('Must include "email" and "password".')
   }
 
-  const user = h.models().User.objects.get({ email })
+  const user = await h.models().User.objects.get({ email })
   if (!user) {
     return http400(`User with email "${email}" does not exist.`)
   }

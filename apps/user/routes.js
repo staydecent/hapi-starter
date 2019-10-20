@@ -32,7 +32,8 @@ module.exports = [
 
   {
     options: {
-      description: 'Signup user with email and password'
+      description: 'Signup user with email and password',
+      auth: false
     },
     method: 'POST',
     path: '/users/signup',

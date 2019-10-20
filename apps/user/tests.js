@@ -16,6 +16,7 @@ describe('GET /users', () => {
   })
 
   afterEach(async () => {
+    await server.knex('users').truncate()
     await server.stop()
   })
 
@@ -41,7 +42,7 @@ describe('GET /users', () => {
   it('allows new signups', async () => {
     const res = await server.inject({
       method: 'POST',
-      url: '/users',
+      url: '/users/signup',
       payload: { email: 'new@example.org', password: 'abc123' }
     })
     expect(res.statusCode).to.equal(201)
