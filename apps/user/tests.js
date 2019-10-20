@@ -21,7 +21,7 @@ describe('GET /users', () => {
 
   it('requires authentication', async () => {
     const res = await server.inject({
-      method: 'get',
+      method: 'GET',
       url: '/users'
     })
     expect(res.statusCode).to.equal(401)
@@ -29,12 +29,23 @@ describe('GET /users', () => {
 
   it('responds with list of users', async () => {
     const res = await server.inject({
-      method: 'get',
+      method: 'GET',
       url: '/users',
       headers: { Authorization: 'Token 1234' }
     })
     expect(res.statusCode).to.equal(200)
     expect(res.result.results).to.exist()
     expect(res.result.results.length).to.be.above(1)
+  })
+
+  it('allows new signups', async () => {
+    const res = await server.inject({
+      method: 'POST',
+      url: '/users',
+      payload: { email: 'new@example.org', password: 'abc123' }
+    })
+    expect(res.statusCode).to.equal(201)
+    expect(res.result.userId).to.exist()
+    expect(res.result.token).to.exist()
   })
 })
