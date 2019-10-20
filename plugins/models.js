@@ -18,23 +18,25 @@ module.exports = {
     const models = {}
 
     const registerModel = (modelName, tableName, defn = {}) => {
+      const methods = {}
+      for (const k in defn) {
+        methods[k] = defn[k].bind(null, knex)
+      }
       models[modelName] = {
-        ...defn,
+        ...methods,
         objects: {
           all (select = '*') {
             return knex.select(select).from(tableName)
           },
 
           filter (where, select = '*') {
-            return Array.isArray(where)
-              ? knex.select(select).where(...where).from(tableName)
-              : knex.select(select).where(where).from(tableName)
+            where = Array.isArray(where) ? where : [where]
+            return knex.select(select).where(...where).from(tableName)
           },
 
           async get (where, select = '*') {
-            const res = await Array.isArray(where)
-              ? knex.select(select).limit(1).where(...where).from(tableName)
-              : knex.select(select).limit(1).where(where).from(tableName)
+            where = Array.isArray(where) ? where : [where]
+            const res = await knex.select(select).limit(1).where(...where).from(tableName)
             return Array.isArray(res) ? res[0] : undefined
           }
         }

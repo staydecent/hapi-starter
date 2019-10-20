@@ -49,4 +49,28 @@ describe('GET /users', () => {
     expect(res.result.userId).to.exist()
     expect(res.result.token).to.exist()
   })
+
+  it('handles login', async () => {
+    const payload = { email: 'login@example.org', password: 'abc123' }
+    const userId = await server.models().User.createUser(payload)
+    expect(userId).to.exist()
+    const res = await server.inject({
+      method: 'POST',
+      url: '/users/login',
+      payload: payload
+    })
+    expect(res.statusCode).to.equal(200)
+    expect(res.result.userId).to.exist()
+    expect(res.result.token).to.exist()
+  })
+
+  it('handles bad login credentials', async () => {
+    const payload = { email: 'login@example.org', password: 'abc123' }
+    const res = await server.inject({
+      method: 'POST',
+      url: '/users/login',
+      payload: payload
+    })
+    expect(res.statusCode).to.equal(400)
+  })
 })

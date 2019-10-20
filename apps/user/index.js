@@ -1,4 +1,5 @@
 const routes = require('./routes')
+const { User } = require('./models')
 
 // path('users', api.Users.as_view(), name='users'),
 // path('users/<int:pk>', api.Users.as_view(), name='user'),
@@ -27,7 +28,7 @@ module.exports = {
     server.auth.default('token')
 
     // Register our models
-    server.registerModel('User', 'users')
+    server.registerModel('User', 'users', User)
     server.registerModel('Token', 'tokens')
 
     // Load our user routes

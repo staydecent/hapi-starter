@@ -42,7 +42,8 @@ module.exports = [
 
   {
     options: {
-      description: 'Login user with provided credentials'
+      description: 'Login user with provided credentials',
+      auth: false
     },
     method: 'POST',
     path: '/users/login',
