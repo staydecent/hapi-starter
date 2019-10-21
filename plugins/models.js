@@ -30,14 +30,26 @@ module.exports = {
           },
 
           filter (where, select = '*') {
-            where = Array.isArray(where) ? where : [where]
+            where = Array.isArray(where) ? snake(where) : [where]
             return knex.select(select).where(...where).from(tableName)
           },
 
           async get (where, select = '*') {
-            where = Array.isArray(where) ? where : [where]
+            where = Array.isArray(where) ? snake(where) : [where]
             const res = await knex.select(select).limit(1).where(...where).from(tableName)
             return Array.isArray(res) ? res[0] : undefined
+          },
+
+          async del (where) {
+            where = Array.isArray(where) ? snake(where) : [where]
+            const rows = await knex(tableName).where(...where).del()
+            return rows
+          },
+
+          async update (where, params) {
+            where = Array.isArray(where) ? where : [where]
+            const res = await knex(tableName).where(...where).update(snake(params))
+            return res
           }
         }
       }
@@ -60,4 +72,26 @@ module.exports = {
       knex && knex.destroy()
     })
   }
+}
+
+function snake (obj) {
+  const ret = {}
+  for (const k in obj) {
+    ret[toSnakeCase(k)] = obj[k]
+  }
+  return ret
+}
+
+function toSnakeCase (str) {
+  let ret = ''
+  let prevLowercase = false
+  for (const s of str) {
+    const isUppercase = s.toUpperCase() === s
+    if (isUppercase && prevLowercase) {
+      ret += '_'
+    }
+    ret += s
+    prevLowercase = !isUppercase
+  }
+  return ret.toLowerCase()
 }

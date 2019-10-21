@@ -1,3 +1,4 @@
+const crypto = require('crypto')
 const bcrypt = require('bcryptjs')
 
 module.exports.User = {
@@ -11,5 +12,16 @@ module.exports.User = {
 
   checkPassword (knex, userInput, hash) {
     return bcrypt.compare(userInput, hash)
+  },
+
+  async createTokenForUser (knex, userId) {
+    const key = await crypto
+      .createHash('sha1')
+      .update(crypto.randomBytes(20) + userId)
+      .digest('hex')
+    await knex
+      .insert({ user: userId, key })
+      .into('tokens')
+    return key
   }
 }

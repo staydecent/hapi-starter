@@ -8,9 +8,11 @@ const startServer = require('../../index')
 
 describe('GET /users', () => {
   let server
+  let User
 
   beforeEach(async () => {
     server = await startServer(true)
+    User = server.models().User
     await server.migrate.latest({ directory: path.resolve('./config/migrations') })
     await server.seed.run({ directory: path.resolve('./config/seeds') })
   })
@@ -26,17 +28,6 @@ describe('GET /users', () => {
       url: '/users'
     })
     expect(res.statusCode).to.equal(401)
-  })
-
-  it('responds with list of users', async () => {
-    const res = await server.inject({
-      method: 'GET',
-      url: '/users',
-      headers: { Authorization: 'Token 1234' }
-    })
-    expect(res.statusCode).to.equal(200)
-    expect(res.result.results).to.exist()
-    expect(res.result.results.length).to.be.above(1)
   })
 
   it('allows new signups', async () => {
@@ -72,5 +63,21 @@ describe('GET /users', () => {
       payload: payload
     })
     expect(res.statusCode).to.equal(400)
+  })
+
+  it('responds with list of users', async () => {
+    const payload = { email: 'login@example.org', password: 'abc123' }
+    const userId = await User.createUser(payload)
+    expect(userId).to.exist()
+    const token = await User.createTokenForUser(userId)
+    expect(token).to.exist()
+    const res = await server.inject({
+      method: 'GET',
+      url: '/users',
+      headers: { Authorization: `Token ${token}` }
+    })
+    expect(res.statusCode).to.equal(200)
+    expect(res.result.results).to.exist()
+    expect(res.result.results.length).to.be.above(1)
   })
 })

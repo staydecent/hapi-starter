@@ -14,12 +14,24 @@ module.exports = {
     // Setup Token authentication
     server.auth.strategy('token', 'bearer-access-token', {
       tokenType: 'Token',
-      validate: async (request, token, h) => {
-        // here is where you validate your token
-        // comparing with token from your database for example
-        const isValid = token === '1234'
-        const credentials = { token }
-        return { isValid, credentials }
+      validate: async (request, key, h) => {
+        const { Token } = server.models()
+        const token = await Token.objects.get({ key })
+        let isValid = token !== undefined
+        // Only valid if last login within 7 days
+        if (isValid) {
+          const today = new Date()
+          const createdAt = new Date(token.createdAt)
+          const daysOld = Math.floor((createdAt - today) / (1000 * 60 * 60 * 24))
+          if (daysOld > 7) {
+            isValid = false
+            Token.objects.del({ id: token.id })
+          } else {
+            Token.objects.update({ id: token.id }, { createdAt: new Date() })
+          }
+        }
+
+        return { isValid, credentials: isValid ? token : {} }
       }
     })
 
