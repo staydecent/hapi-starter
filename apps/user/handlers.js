@@ -16,12 +16,11 @@ async function signup (request, h) {
       errors: ['An account with that email already exists.']
     }).code(400)
   } else {
-    const userId = await User.createUser({ email, password })
-
+    const user = await User.createUser({ email, password })
     // # Mail.send(settings.MAIL_NEW_ACCOUNT, user, {'email': 'john@example.com'})
     // Create a login token right away
-    const token = await User.createTokenForUser(userId)
-    return h.response({ userId, token }).code(201)
+    const token = await user.createToken()
+    return h.response({ userId: user.id, token }).code(201)
   }
 }
 
@@ -41,11 +40,11 @@ async function login (request, h) {
     return http400(`User with email "${email}" does not exist.`)
   }
 
-  const passOk = await User.checkPassword(password, user.password)
+  const passOk = await user.checkPassword(password)
   if (!passOk) {
     return http400('Unable to log in with provided credentials.')
   }
 
-  const token = await User.createTokenForUser(user.id)
+  const token = await user.createToken()
   return h.response({ userId: user.id, token: token }).code(200)
 }

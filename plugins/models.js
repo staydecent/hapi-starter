@@ -18,26 +18,39 @@ module.exports = {
     const models = {}
 
     const registerModel = (modelName, tableName, defn = {}) => {
-      const methods = {}
-      for (const k in defn) {
-        methods[k] = defn[k].bind(null, knex)
+      const { methods, ...funcs } = defn
+      const createInstance = obj => {
+        if (obj == null) return obj
+        obj.knex = knex
+        const instance = { ...obj }
+        for (const k in methods) {
+          instance[k] = methods[k].bind(obj)
+        }
+        return instance
+      }
+      for (const k in funcs) {
+        funcs[k] = funcs[k].bind(null, server)
       }
       models[modelName] = {
-        ...methods,
+        ...funcs,
         objects: {
-          all (select = '*') {
-            return knex.select(select).from(tableName)
+          async all (select = '*') {
+            const res = await knex.select(select).from(tableName)
+            // @TODO: replace with generator to lazy wrap results
+            return res.map(createInstance)
           },
 
-          filter (where, select = '*') {
+          async filter (where, select = '*') {
             where = Array.isArray(where) ? snake(where) : [where]
-            return knex.select(select).where(...where).from(tableName)
+            const res = await knex.select(select).where(...where).from(tableName)
+            // @TODO: replace with generator to lazy wrap results
+            return res.map(createInstance)
           },
 
           async get (where, select = '*') {
             where = Array.isArray(where) ? snake(where) : [where]
             const res = await knex.select(select).limit(1).where(...where).from(tableName)
-            return Array.isArray(res) ? res[0] : undefined
+            return Array.isArray(res) ? createInstance(res[0]) : undefined
           },
 
           async del (where) {

@@ -2,26 +2,28 @@ const crypto = require('crypto')
 const bcrypt = require('bcryptjs')
 
 module.exports.User = {
-  async createUser (knex, { email, password }) {
+  async createUser ({ knex, models }, { email, password }) {
     const hashed = await bcrypt.hash(password, 10)
-    const [userId] = await knex
+    const [id] = await knex
       .insert({ email, password: hashed })
       .into('users')
-    return userId
+    return models().User.objects.get({ id })
   },
 
-  checkPassword (knex, userInput, hash) {
-    return bcrypt.compare(userInput, hash)
-  },
+  methods: {
+    checkPassword (userInput) {
+      return bcrypt.compare(userInput, this.password)
+    },
 
-  async createTokenForUser (knex, userId) {
-    const key = await crypto
-      .createHash('sha1')
-      .update(crypto.randomBytes(20) + userId)
-      .digest('hex')
-    await knex
-      .insert({ user: userId, key })
-      .into('tokens')
-    return key
+    async createToken () {
+      const key = await crypto
+        .createHash('sha1')
+        .update(crypto.randomBytes(20) + this.id)
+        .digest('hex')
+      await this.knex
+        .insert({ user: this.id, key })
+        .into('tokens')
+      return key
+    }
   }
 }

@@ -43,7 +43,7 @@ describe('GET /users', () => {
 
   it('handles login', async () => {
     const payload = { email: 'login@example.org', password: 'abc123' }
-    const userId = await server.models().User.createUser(payload)
+    const userId = await User.createUser(payload)
     expect(userId).to.exist()
     const res = await server.inject({
       method: 'POST',
@@ -67,9 +67,9 @@ describe('GET /users', () => {
 
   it('responds with list of users', async () => {
     const payload = { email: 'login@example.org', password: 'abc123' }
-    const userId = await User.createUser(payload)
-    expect(userId).to.exist()
-    const token = await User.createTokenForUser(userId)
+    const user = await User.createUser(payload)
+    expect(user).to.exist()
+    const token = await user.createToken()
     expect(token).to.exist()
     const res = await server.inject({
       method: 'GET',
