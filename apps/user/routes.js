@@ -1,4 +1,4 @@
-const { userSchema, usersSchema } = require('./schema')
+const { userSchema } = require('./schema')
 const { signup, login } = require('./handlers')
 
 module.exports = [
@@ -11,7 +11,7 @@ module.exports = [
     handler: {
       resourceList: {
         queryset: (request, { User }) => User.objects.all(),
-        schema: usersSchema
+        schema: userSchema
       }
     }
   },

@@ -1,3 +1,9 @@
+const Joi = require('@hapi/joi')
+
+const modelSchema = Joi.object({
+  knex: Joi.any()
+})
+
 module.exports = {
   name: 'RestfulPlugin',
   version: '1.0.0',
@@ -7,7 +13,8 @@ module.exports = {
       const errors = []
       try {
         const results = await queryset(request, server.models())
-        const { value, error } = schema.validate(results, { presence: 'required' })
+        const manySchema = Joi.array().items(modelSchema.concat(schema))
+        const { value, error } = manySchema.validate(results, { presence: 'required' })
         if (error) {
           errors.push(error.details)
         } else {
