@@ -34,6 +34,10 @@ module.exports = {
       models[modelName] = {
         ...funcs,
         objects: {
+          count () {
+            return knex(tableName).count('id')
+          },
+
           async all (select = '*') {
             const res = await knex.select(select).from(tableName)
             // @TODO: replace with generator to lazy wrap results
@@ -47,10 +51,24 @@ module.exports = {
             return res.map(createInstance)
           },
 
+          async create (params) {
+            const [id] = await knex(tableName).insert(params)
+            return this.get({ id })
+          },
+
           async get (where, select = '*') {
             where = Array.isArray(where) ? snake(where) : [where]
             const res = await knex.select(select).limit(1).where(...where).from(tableName)
             return Array.isArray(res) ? createInstance(res[0]) : undefined
+          },
+
+          async getOrCreate (whereParams, select = '*') {
+            const instance = await this.get(whereParams, select)
+            if (instance) {
+              return instance
+            } else {
+              return this.create(whereParams)
+            }
           },
 
           async del (where) {
