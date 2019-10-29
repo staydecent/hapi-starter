@@ -1,16 +1,61 @@
 const Joi = require('@hapi/joi')
+const { pathEq } = require('wasmuth')
 
 const modelSchema = Joi.object({
   knex: Joi.any()
 })
+
+/*
+{
+   "description": "A product from Acme's catalog",
+   "type": "object",
+   "properties": {
+      "id": {
+         "description": "The unique identifier for a product",
+         "type": "integer"
+      },
+      "name": {
+         "description": "Name of the product",
+         "type": "string"
+      },
+      "price": {
+         "type": "number",
+         "minimum": 0,
+         "exclusiveMinimum": true
+      }
+   },
+   "required": ["id", "name", "price"]
+}
+*/
+const convert = (model, description, schema) => {
+  const json = schema.describe()
+  // console.log(json.keys)
+  const required = []
+  for (const k in json.keys) {
+    const field = json.keys[k]
+    if (pathEq('flags.presence', 'required', field)) {
+      required.push(k)
+    }
+  }
+  return {
+    $schema: 'http://json-schema.org/draft-04/schema#',
+    type: schema.type,
+    title: model,
+    description,
+    required,
+    properties: json.keys
+  }
+}
 
 module.exports = {
   name: 'RestfulPlugin',
   version: '1.0.0',
   register: async function (server) {
     // Resouce specification handler
-    server.decorate('handler', 'resourceSpec', (route, { model, schema }) => (request, h) => {
-      return h.response({ model, schema: schema.describe() }).code(200)
+    server.decorate('handler', 'resourceSchema', (route, { model, schema }) => (request, h) => {
+      return h.response(
+        convert(model, route.settings.description, schema)
+      ).code(200)
     })
 
     // Resouce list handler

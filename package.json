@@ -24,8 +24,10 @@
     "blipp": "4.0.1",
     "check-arg-types": "1.1.2",
     "hapi-auth-bearer-token": "6.2.1",
+    "joi-to-json-schema": "5.1.0",
     "knex": "0.19.5",
-    "sqlite3": "4.1.0"
+    "sqlite3": "4.1.0",
+    "wasmuth": "1.13.2"
   },
   "devDependencies": {
     "@hapi/code": "7.0.0",

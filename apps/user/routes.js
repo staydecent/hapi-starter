@@ -4,13 +4,13 @@ const { signup, login } = require('./handlers')
 module.exports = [
   {
     options: {
-      description: 'Model specification for Users',
+      description: 'JSON schema for Users',
       auth: false
     },
     method: 'OPTIONS',
     path: '/users',
     handler: {
-      resourceSpec: {
+      resourceSchema: {
         model: 'User',
         schema: userSchema
       }
