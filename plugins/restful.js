@@ -5,31 +5,8 @@ const modelSchema = Joi.object({
   knex: Joi.any()
 })
 
-/*
-{
-   "description": "A product from Acme's catalog",
-   "type": "object",
-   "properties": {
-      "id": {
-         "description": "The unique identifier for a product",
-         "type": "integer"
-      },
-      "name": {
-         "description": "Name of the product",
-         "type": "string"
-      },
-      "price": {
-         "type": "number",
-         "minimum": 0,
-         "exclusiveMinimum": true
-      }
-   },
-   "required": ["id", "name", "price"]
-}
-*/
 const convert = (model, description, schema) => {
   const json = schema.describe()
-  // console.log(json.keys)
   const required = []
   for (const k in json.keys) {
     const field = json.keys[k]
