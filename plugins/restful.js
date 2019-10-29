@@ -8,6 +8,11 @@ module.exports = {
   name: 'RestfulPlugin',
   version: '1.0.0',
   register: async function (server) {
+    // Resouce specification handler
+    server.decorate('handler', 'resourceSpec', (route, { model, schema }) => (request, h) => {
+      return h.response({ model, schema: schema.describe() }).code(200)
+    })
+
     // Resouce list handler
     server.decorate('handler', 'resourceList', (route, { queryset, schema }) => async (request, h) => {
       const errors = []
