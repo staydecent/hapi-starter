@@ -1,16 +1,28 @@
 const Joi = require('@hapi/joi')
-const { pathEq } = require('wasmuth')
+const W = require('wasmuth')
 
 const modelSchema = Joi.object({
   knex: Joi.any()
 })
 
+const rules = (field) => {
+  const ret = {}
+  const min = W.pipe(
+    W.pathOr([], 'rules'),
+    W.find(r => r.name === 'min')
+  )(field)
+  if (min) {
+    ret.minLength = min.args.limit
+  }
+  return ret
+}
+
 const convert = (model, description, schema) => {
-  const json = schema.describe()
+  const json = schema.tailor('post').describe()
   const required = []
   for (const k in json.keys) {
     const field = json.keys[k]
-    if (pathEq('flags.presence', 'required', field)) {
+    if (W.pathEq('flags.presence', 'required', field)) {
       required.push(k)
     }
   }
@@ -20,7 +32,10 @@ const convert = (model, description, schema) => {
     title: model,
     description,
     required,
-    properties: json.keys
+    properties: W.map((k, v) => ({
+      ...v,
+      ...rules(v)
+    }), json.keys)
   }
 }
 
@@ -40,7 +55,7 @@ module.exports = {
       const errors = []
       try {
         const results = await queryset(request, server.models())
-        const manySchema = Joi.array().items(modelSchema.concat(schema))
+        const manySchema = Joi.array().items(modelSchema.concat(schema).tailor('get'))
         const { value, error } = manySchema.validate(results, { presence: 'required' })
         if (error) {
           errors.push(error.details)
