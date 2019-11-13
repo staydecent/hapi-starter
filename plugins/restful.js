@@ -18,7 +18,8 @@ const rules = (field) => {
 }
 
 const convert = (model, description, schema) => {
-  const json = schema.tailor('post').describe()
+  const json = schema.tailor('get').describe()
+  console.log(json.keys.id)
   const required = []
   for (const k in json.keys) {
     const field = json.keys[k]

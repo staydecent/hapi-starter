@@ -1,42 +1,42 @@
 const path = require('path')
 const postProcessResponse = require('../libs/post-process-response')
 
+const baseConfig = {
+  client: 'sqlite3',
+  useNullAsDefault: true,
+  debug: true,
+  postProcessResponse,
+  connection: {
+    filename: path.resolve(__dirname, '../dev.sqlite')
+  },
+  migrations: {
+    tableName: 'migrations',
+    directory: [
+      path.resolve(__dirname, '../apps/user/migrations')
+    ]
+  }
+}
+
 module.exports = {
   development: {
-    client: 'sqlite3',
-    useNullAsDefault: true,
-    debug: true,
-    postProcessResponse,
+    ...baseConfig,
     connection: {
       filename: path.resolve(__dirname, '../dev.sqlite')
-    },
-    migrations: {
-      tableName: 'migrations'
     }
   },
 
   test: {
-    client: 'sqlite3',
-    useNullAsDefault: true,
+    ...baseConfig,
     debug: false,
-    postProcessResponse,
     connection: {
       filename: ':memory:'
-    },
-    migrations: {
-      tableName: 'migrations'
     }
   },
 
   production: {
+    ...baseConfig,
     client: 'pg',
     connection: process.env.DATABASE_URL,
-    migrations: {
-      directory: './db/migrations'
-    },
-    seeds: {
-      directory: './db/seeds/production'
-    },
-    useNullAsDefault: true
+    debug: false
   }
 }

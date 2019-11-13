@@ -9,7 +9,7 @@
     "production": "node index.js",
     "pretest": "standard --verbose | snazzy",
     "test": "lab -v apps/**/tests.js",
-    "migrate:make": "knex migrate:make --knexfile config/db.js",
+    "migrate:make": "node scripts/make-migration.js",
     "migrate": "knex migrate:latest --knexfile config/db.js",
     "seed:make": "knex seed:make --knexfile config/db.js",
     "seed": "knex seed:run --knexfile config/db.js"

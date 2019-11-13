@@ -13,7 +13,7 @@ describe('GET /users', () => {
   beforeEach(async () => {
     server = await startServer(true)
     User = server.models().User
-    await server.migrate.latest({ directory: path.resolve('./config/migrations') })
+    await server.migrate.latest({ directory: path.resolve(__dirname, 'migrations') })
     await server.seed.run({ directory: path.resolve('./config/seeds') })
   })
 

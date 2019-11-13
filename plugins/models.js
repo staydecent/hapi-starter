@@ -18,7 +18,11 @@ module.exports = {
     const models = {}
 
     const registerModel = (modelName, tableName, defn = {}) => {
-      const { methods, ...funcs } = defn
+      const {
+        schema,
+        methods,
+        ...funcs
+      } = defn
       const createInstance = obj => {
         if (obj == null) return obj
         obj.knex = knex
