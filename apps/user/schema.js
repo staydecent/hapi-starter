@@ -11,7 +11,24 @@ module.exports.userSchema = Joi.object({
     post: () => Joi.string().min(6)
   }),
   updatedAt: Joi.date(),
-  createdAt: Joi.date(),
-  checkPassword: Joi.function(),
-  createToken: Joi.function()
+  createdAt: Joi.date()
 })
+
+// Fields are required by default.
+// If only supplying `type` you can pass the string descriptor
+// instead of an object. If the value depends on the request
+// context, then you can return a function that returns an object.
+// module.exports.userSchema = {
+//   id: ({ method }) => ({
+//     type: 'integer',
+//     required: method === 'GET',
+//     forbidden: method === 'POST'
+//   }),
+//   password: ({ method }) => method === 'GET'
+//     ? { type: 'strip' }
+//     : { type: 'string', validate: { min: 6 } }
+//   }
+//   email: 'email',
+//   updatedAt: 'date',
+//   createdAt: 'date'
+// }

@@ -23,18 +23,21 @@ module.exports = {
         methods,
         ...funcs
       } = defn
+
       const createInstance = obj => {
         if (obj == null) return obj
         obj.knex = knex
-        const instance = { ...obj }
+        const instance = { ...obj, _methods: Object.keys(methods || {}) }
         for (const k in methods) {
           instance[k] = methods[k].bind(obj)
         }
         return instance
       }
+
       for (const k in funcs) {
         funcs[k] = funcs[k].bind(null, server)
       }
+
       models[modelName] = {
         ...funcs,
         objects: {
