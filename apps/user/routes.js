@@ -1,4 +1,3 @@
-const { userSchema } = require('./schema')
 const { signup, login } = require('./handlers')
 
 module.exports = [
@@ -11,8 +10,7 @@ module.exports = [
     path: '/users',
     handler: {
       resourceSchema: {
-        model: 'User',
-        schema: userSchema
+        model: 'User'
       }
     }
   },
@@ -25,8 +23,8 @@ module.exports = [
     path: '/users',
     handler: {
       resourceList: {
-        queryset: (request, { User }) => User.objects.all(),
-        schema: userSchema
+        model: 'User',
+        queryset: (request, User) => User.objects.all()
       }
     }
   },
@@ -39,8 +37,8 @@ module.exports = [
     path: '/users/{id}',
     handler: {
       resourceDetail: {
-        queryset: (request, { User }) => User.objects.get({ id: request.params.id }),
-        schema: userSchema
+        model: 'User',
+        queryset: (request, User) => User.objects.get({ id: request.params.id })
       }
     }
   },

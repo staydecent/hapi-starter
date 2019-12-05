@@ -19,7 +19,6 @@ const rules = (field) => {
 
 const convert = (model, description, schema) => {
   const json = schema.tailor('get').describe()
-  console.log(json.keys.id)
   const required = []
   for (const k in json.keys) {
     const field = json.keys[k]
@@ -45,18 +44,20 @@ module.exports = {
   version: '1.0.0',
   register: async function (server) {
     // Resouce specification handler
-    server.decorate('handler', 'resourceSchema', (route, { model, schema }) => (request, h) => {
+    server.decorate('handler', 'resourceSchema', (route, { model }) => (request, h) => {
       return h.response(
-        convert(model, route.settings.description, schema)
+        convert(model, route.settings.description, server.models()[model].schema)
       ).code(200)
     })
 
     // Resouce list handler
-    server.decorate('handler', 'resourceList', (route, { queryset, schema }) => async (request, h) => {
+    server.decorate('handler', 'resourceList', (route, { model, queryset }) => async (request, h) => {
       const errors = []
       try {
-        const results = await queryset(request, server.models())
-        const manySchema = Joi.array().items(modelSchema.concat(schema).tailor('get'))
+        const Model = server.models()[model]
+        const results = await queryset(request, Model)
+        const instanceSchema = modelSchema.concat(Model.schema).tailor('get')
+        const manySchema = Joi.array().items(instanceSchema)
         const { value, error } = manySchema.validate(results, { presence: 'required' })
         if (error) {
           errors.push(error.details)
@@ -64,25 +65,24 @@ module.exports = {
           return { results: value }
         }
       } catch (err) {
-        console.log({ err })
         errors.push(err)
       }
       return h.response({ errors }).code(500)
     })
 
     // Resource detail handler
-    server.decorate('handler', 'resourceDetail', (route, { queryset, schema }) => async (request, h) => {
+    server.decorate('handler', 'resourceDetail', (route, { model, queryset }) => async (request, h) => {
       const errors = []
       try {
-        const result = await queryset(request, server.models())
-        const { value, error } = schema.validate(result, { presence: 'required' })
+        const Model = server.models()[model]
+        const result = await queryset(request, Model)
+        const { value, error } = Model.schema.validate(result, { presence: 'required' })
         if (error) {
           errors.push(error.details)
         } else {
           return value
         }
       } catch (err) {
-        console.log({ err })
         errors.push(err)
       }
       return h.response({ errors }).code(500)

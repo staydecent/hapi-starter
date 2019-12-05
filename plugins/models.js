@@ -18,11 +18,8 @@ module.exports = {
     const models = {}
 
     const registerModel = (modelName, tableName, defn = {}) => {
-      const {
-        schema,
-        methods,
-        ...funcs
-      } = defn
+      const { schema, methods, ...funcs } = defn
+
       const createInstance = obj => {
         if (obj == null) return obj
         obj.knex = knex
@@ -32,11 +29,14 @@ module.exports = {
         }
         return instance
       }
+
       for (const k in funcs) {
         funcs[k] = funcs[k].bind(null, server)
       }
+
       models[modelName] = {
         ...funcs,
+        schema,
         objects: {
           count () {
             return knex(tableName).count('id')
