@@ -1,7 +1,24 @@
+const Joi = require('@hapi/joi')
 const crypto = require('crypto')
 const bcrypt = require('bcryptjs')
 
 module.exports.User = {
+  schema: Joi.object({
+    id: Joi.number().integer().alter({
+      get: (integer) => integer.required(),
+      post: (integer) => integer.forbidden()
+    }),
+    email: Joi.string().email().required(),
+    password: Joi.any().alter({
+      get: (any) => any.strip(),
+      post: () => Joi.string().min(6)
+    }),
+    updatedAt: Joi.date(),
+    createdAt: Joi.date(),
+    checkPassword: Joi.function(),
+    createToken: Joi.function()
+  }),
+
   // Instance methods. When you get an instance of a User
   // back, you can call these methods: `user.createToken()`
   methods: {
