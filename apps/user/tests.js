@@ -6,7 +6,7 @@ const { expect } = require('@hapi/code')
 const { afterEach, beforeEach, describe, it } = exports.lab = Lab.script()
 const startServer = require('../../index')
 
-describe('GET /users', () => {
+describe('apps.user', () => {
   let server
   let User
 

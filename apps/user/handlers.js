@@ -5,9 +5,7 @@ module.exports = {
 
 async function signup (request, h) {
   const { User } = h.models()
-
-  const email = request.payload.email
-  const password = request.payload.password
+  const { email, password } = request.payload
 
   // Check existing user with email, otherwise create new user
   const user = await User.objects.get({ email })
@@ -25,12 +23,10 @@ async function signup (request, h) {
 }
 
 async function login (request, h) {
-  const { User } = h.models()
-
   const http400 = err => h.response({ errors: [err] }).code(400)
+  const { User } = h.models()
+  const { email, password } = request.payload
 
-  const email = request.payload.email
-  const password = request.payload.password
   if (!email || !password) {
     return http400('Must include "email" and "password".')
   }

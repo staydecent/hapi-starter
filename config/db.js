@@ -1,3 +1,4 @@
+const color = require('colorette')
 const path = require('path')
 const postProcessResponse = require('../libs/post-process-response')
 
@@ -14,6 +15,13 @@ const baseConfig = {
     directory: [
       path.resolve(__dirname, '../apps/user/migrations')
     ]
+  },
+  log: {
+    warn (message) {
+      if (!message.includes('This resets migrationSource to default FsMigrations')) {
+        console.log(color.yellow(message))
+      }
+    }
   }
 }
 

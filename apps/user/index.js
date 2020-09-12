@@ -18,6 +18,7 @@ module.exports = {
         const { Token } = server.models()
         const token = await Token.objects.get({ key })
         let isValid = token !== undefined
+
         // Only valid if last login within 7 days
         if (isValid) {
           const today = new Date()
