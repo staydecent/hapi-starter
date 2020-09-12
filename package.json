@@ -18,7 +18,7 @@
   "license": "MIT",
   "dependencies": {
     "@hapi/glue": "6.2.0",
-    "@hapi/hapi": "18.4.0",
+    "@hapi/hapi": "20.0.0",
     "@hapi/joi": "16.1.7",
     "bcryptjs": "2.4.3",
     "blipp": "4.0.1",
