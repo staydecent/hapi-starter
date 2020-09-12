@@ -14,9 +14,7 @@ module.exports.User = {
       post: () => Joi.string().min(6)
     }),
     updatedAt: Joi.date(),
-    createdAt: Joi.date(),
-    checkPassword: Joi.function(),
-    createToken: Joi.function()
+    createdAt: Joi.date()
   }),
 
   // Instance methods. When you get an instance of a User

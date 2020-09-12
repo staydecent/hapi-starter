@@ -2,8 +2,16 @@ const Joi = require('@hapi/joi')
 const W = require('wasmuth')
 
 const modelSchema = Joi.object({
-  knex: Joi.any()
+  knex: Joi.any(),
+  _methods: Joi.strip()
 })
+
+const stripMethods = (result, schema) =>
+  schema
+    .concat(Joi.object(W.pipe(
+      W.map(k => [k, Joi.strip()]),
+      W.fromPairs
+    )(result._methods)))
 
 const rules = (field) => {
   const ret = {}
@@ -57,7 +65,7 @@ module.exports = {
         const Model = server.models()[model]
         const results = await queryset(request, Model)
         const instanceSchema = modelSchema.concat(Model.schema).tailor('get')
-        const manySchema = Joi.array().items(instanceSchema)
+        const manySchema = Joi.array().items(stripMethods(results[0], instanceSchema))
         const { value, error } = manySchema.validate(results, { presence: 'required' })
         if (error) {
           errors.push(error.details)
@@ -76,7 +84,7 @@ module.exports = {
       try {
         const Model = server.models()[model]
         const result = await queryset(request, Model)
-        const { value, error } = Model.schema.validate(result, { presence: 'required' })
+        const { value, error } = stripMethods(result, Model.schema).validate(result, { presence: 'required' })
         if (error) {
           errors.push(error.details)
         } else {
