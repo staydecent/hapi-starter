@@ -3,16 +3,14 @@ module.exports = {
   login
 }
 
-async function signup (request, h) {
-  const { User } = h.models()
-
-  const email = request.payload.email
-  const password = request.payload.password
+async function signup (request, { models, response }) {
+  const { User } = models()
+  const { email, password } = request.payload
 
   // Check existing user with email, otherwise create new user
   const user = await User.objects.get({ email })
   if (user) {
-    return h.response({
+    return response({
       errors: ['An account with that email already exists.']
     }).code(400)
   } else {
@@ -20,17 +18,15 @@ async function signup (request, h) {
     // # Mail.send(settings.MAIL_NEW_ACCOUNT, user, {'email': 'john@example.com'})
     // Create a login token right away
     const token = await user.createToken()
-    return h.response({ userId: user.id, token }).code(201)
+    return response({ userId: user.id, token }).code(201)
   }
 }
 
-async function login (request, h) {
-  const { User } = h.models()
+async function login (request, { models, response }) {
+  const http400 = err => response({ errors: [err] }).code(400)
+  const { User } = models()
+  const { email, password } = request.payload
 
-  const http400 = err => h.response({ errors: [err] }).code(400)
-
-  const email = request.payload.email
-  const password = request.payload.password
   if (!email || !password) {
     return http400('Must include "email" and "password".')
   }
@@ -46,5 +42,5 @@ async function login (request, h) {
   }
 
   const token = await user.createToken()
-  return h.response({ userId: user.id, token: token }).code(200)
+  return response({ userId: user.id, token: token }).code(200)
 }
