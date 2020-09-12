@@ -17,23 +17,23 @@
   "author": "Adrian Unger <npm@staydecent.ca>",
   "license": "MIT",
   "dependencies": {
-    "@hapi/glue": "6.2.0",
+    "@hapi/glue": "8.0.0",
     "@hapi/hapi": "20.0.0",
-    "@hapi/joi": "16.1.7",
+    "@hapi/joi": "17.1.1",
     "bcryptjs": "2.4.3",
     "blipp": "4.0.1",
     "check-arg-types": "1.1.2",
     "hapi-auth-bearer-token": "6.2.1",
     "joi-to-json-schema": "5.1.0",
-    "knex": "0.19.5",
-    "sqlite3": "4.1.0",
+    "knex": "0.21.5",
+    "sqlite3": "5.0.0",
     "wasmuth": "1.13.2"
   },
   "devDependencies": {
-    "@hapi/code": "7.0.0",
-    "@hapi/lab": "21.0.0",
-    "nodemon": "1.19.4",
+    "@hapi/code": "8.0.2",
+    "@hapi/lab": "23.0.0",
+    "nodemon": "2.0.4",
     "snazzy": "8.0.0",
-    "standard": "14.3.1"
+    "standard": "14.3.4"
   }
 }

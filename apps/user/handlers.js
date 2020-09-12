@@ -3,14 +3,14 @@ module.exports = {
   login
 }
 
-async function signup (request, { models, response }) {
-  const { User } = models()
+async function signup (request, h) {
+  const { User } = h.models()
   const { email, password } = request.payload
 
   // Check existing user with email, otherwise create new user
   const user = await User.objects.get({ email })
   if (user) {
-    return response({
+    return h.response({
       errors: ['An account with that email already exists.']
     }).code(400)
   } else {
@@ -18,13 +18,13 @@ async function signup (request, { models, response }) {
     // # Mail.send(settings.MAIL_NEW_ACCOUNT, user, {'email': 'john@example.com'})
     // Create a login token right away
     const token = await user.createToken()
-    return response({ userId: user.id, token }).code(201)
+    return h.response({ userId: user.id, token }).code(201)
   }
 }
 
-async function login (request, { models, response }) {
-  const http400 = err => response({ errors: [err] }).code(400)
-  const { User } = models()
+async function login (request, h) {
+  const http400 = err => h.response({ errors: [err] }).code(400)
+  const { User } = h.models()
   const { email, password } = request.payload
 
   if (!email || !password) {
@@ -42,5 +42,5 @@ async function login (request, { models, response }) {
   }
 
   const token = await user.createToken()
-  return response({ userId: user.id, token: token }).code(200)
+  return h.response({ userId: user.id, token: token }).code(200)
 }
