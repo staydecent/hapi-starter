@@ -23,7 +23,7 @@ module.exports = {
       const createInstance = obj => {
         if (obj == null) return obj
         obj.knex = knex
-        const instance = { ...obj }
+        const instance = { ...obj, _methods: Object.keys(methods || {}) }
         for (const k in methods) {
           instance[k] = methods[k].bind(obj)
         }
